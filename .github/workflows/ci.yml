@@ -33,4 +33,7 @@ jobs:
         run: uv run ruff format --check .
   
       - name: Run tests
-        run: uv run pytest            
+        run: uv run pytest
+        
+      - name: Build Docker image
+        run: docker build -t ci-cd-ai-service .
