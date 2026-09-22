@@ -1,13 +1,11 @@
+import os
+
 from fastapi import FastAPI
 
 from ci_cd_ai_service.calculator import add
 
-# from dotenv import load_dotenv
-import os
-
 app = FastAPI()
 
-# load_dotenv()
 
 app_env = os.getenv("APP_ENV", "development")
 
