@@ -57,3 +57,9 @@ jobs:
         run: |
           docker push \
             ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }}
+
+      - name: Deploy to Render
+        if: github.ref == 'refs/heads/main'
+        run: |
+          curl -X POST \
+          "${{ secrets.RENDER_DEPLOY_HOOK_URL }}&imgURL=ghcr.io%2Fatulsingh82889-maker%2Fci-cd-ai-service%3A${{ github.sha }}"
