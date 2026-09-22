@@ -40,7 +40,11 @@ jobs:
         run: uv run pytest
         
       - name: Build Docker image
-        run: docker build -t ci-cd-ai-service .
+        # run: docker build -t ci-cd-ai-service .
+        run: |
+          docker build \
+            -t ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }} .
+
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -56,4 +60,3 @@ jobs:
 
           docker push \
             ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:latest
-            
