@@ -1,6 +1,6 @@
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 
 from ci_cd_ai_service.calculator import add
 
@@ -26,5 +26,9 @@ def environment():
 
 
 @app.get("/health")
-def health():
+def health(response: Response):
+    if os.getenv("HEALTH_CHECK_FAIL") == "true":
+        response.status_code = 500
+        return {"status": "unhealthy"}
+
     return {"status": "healthy"}
