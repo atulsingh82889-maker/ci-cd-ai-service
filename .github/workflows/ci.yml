@@ -64,3 +64,15 @@ jobs:
         run: |
           curl -X POST \
           "${{ secrets.RENDER_STAGING_DEPLOY_HOOK_URL }}&imgURL=ghcr.io%2Fatulsingh82889-maker%2Fci-cd-ai-service%3A${{ github.sha }}"
+
+
+  deploy-production:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Deploy to Production
+        run: |
+          curl -X POST \
+          "${{ secrets.RENDER_DEPLOY_HOOK_URL }}&imgURL=ghcr.io%2Fatulsingh82889-maker%2Fci-cd-ai-service%3A${{ github.sha }}"          
