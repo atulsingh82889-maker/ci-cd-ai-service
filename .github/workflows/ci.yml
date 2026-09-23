@@ -43,7 +43,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           docker build \
-            -t ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }} .
+            -t ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }} \
+            -t ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:latest .
 
       - name: Log in to GHCR
         if: github.ref == 'refs/heads/main'
@@ -56,15 +57,13 @@ jobs:
       - name: Push Docker image
         if: github.ref == 'refs/heads/main'
         run: |
-          docker push \
-            ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:latest
 
       - name: Deploy to Staging
         if: github.ref == 'refs/heads/main'
         run: |
-          curl -X POST \
-          "${{ secrets.RENDER_STAGING_DEPLOY_HOOK_URL }}&imgURL=ghcr.io%2Fatulsingh82889-maker%2Fci-cd-ai-service%3A${{ github.sha }}"
-
+          curl -X POST "${{ secrets.RENDER_STAGING_DEPLOY_HOOK_URL }}"    
 
   deploy-production:
     needs: test
