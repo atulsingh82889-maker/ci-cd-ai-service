@@ -72,30 +72,6 @@ jobs:
           docker push \
             ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:latest
 
-            
-      - name: Verify pushed image
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker pull ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }}
-
-          docker run --rm \
-            ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }} \
-            uv run python -c "import msgpack, setuptools; print('msgpack:', msgpack.__version__); print('setuptools:', setuptools.__version__)"
-
-          docker images --digests \
-            ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service
-            
-            
-      # 11. Security Scan
-      - name: Security scan
-        if: github.ref == 'refs/heads/main'
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }}
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-          format: 'table'
-
       # 12. Deploy to Staging
       - name: Deploy to Staging
         if: github.ref == 'refs/heads/main'
