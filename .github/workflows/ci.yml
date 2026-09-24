@@ -72,6 +72,20 @@ jobs:
           docker push \
             ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:latest
 
+            
+      - name: Verify pushed image
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker pull ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }}
+
+          docker run --rm \
+            ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }} \
+            uv run python -c "import msgpack, setuptools; print('msgpack:', msgpack.__version__); print('setuptools:', setuptools.__version__)"
+
+          docker images --digests \
+            ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service
+            
+            
       # 11. Security Scan
       - name: Security scan
         if: github.ref == 'refs/heads/main'
