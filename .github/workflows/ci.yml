@@ -25,10 +25,10 @@ jobs:
         uses: astral-sh/setup-uv@v6
 
       - name: Set up Python
-        run: uv python install 3.12
+        run: uv python install 3.14
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --frozen
 
       - name: Check lint
         run: uv run ruff check .
@@ -51,6 +51,7 @@ jobs:
           image-ref: ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }}
           severity: 'CRITICAL,HIGH'
           exit-code: '1'
+          format: 'table'
 
       - name: Log in to GHCR
         if: github.ref == 'refs/heads/main'
@@ -63,13 +64,16 @@ jobs:
       - name: Push Docker image
         if: github.ref == 'refs/heads/main'
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:latest
+          docker push \
+            ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:${{ github.sha }}
+
+          docker push \
+            ghcr.io/${{ github.repository_owner }}/ci-cd-ai-service:latest
 
       - name: Deploy to Staging
         if: github.ref == 'refs/heads/main'
         run: |
-          curl -X POST "${{ secrets.RENDER_STAGING_DEPLOY_HOOK_URL }}"    
+          curl -X POST "${{ secrets.RENDER_STAGING_DEPLOY_HOOK_URL }}"
 
   deploy-production:
     needs: test
@@ -80,4 +84,4 @@ jobs:
       - name: Deploy to Production
         run: |
           curl -X POST \
-          "${{ secrets.RENDER_DEPLOY_HOOK_URL }}&imgURL=ghcr.io%2Fatulsingh82889-maker%2Fci-cd-ai-service%3A${{ github.sha }}"          
+          "${{ secrets.RENDER_DEPLOY_HOOK_URL }}&imgURL=ghcr.io%2Fatulsingh82889-maker%2Fci-cd-ai-service%3A${{ github.sha }}"
